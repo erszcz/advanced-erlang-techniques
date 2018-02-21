@@ -4,7 +4,8 @@
 -compile({parse_transform, record_transform}).
 
 -record(rt_test, {field_a :: integer(),
-                  field_b}).
+                  field_b,
+                  field_c :: list(byte())}).
 
 %default() ->
 %    #rt_test{}.
