@@ -36,11 +36,8 @@ getter(Line, RecordName, {typed_record_field, {record_field, _, _} = RF, {user_t
 setter(Line, RecordName, {record_field, _, _} = RF) ->
     setter(Line, RecordName, RF, []);
 
-setter(Line, RecordName, {typed_record_field, {record_field, _, _} = RF, {type, _, Type, _}}) ->
-    setter(Line, RecordName, RF, setter_value_guards(Line, Type));
-
-setter(Line, RecordName, {typed_record_field, {record_field, _, _} = RF, {user_type, _, Type, _}}) ->
-    setter(Line, RecordName, RF, setter_value_guards(Line, Type)).
+setter(Line, RecordName, {typed_record_field, {record_field, _, _} = RF, TypeNode}) ->
+    setter(Line, RecordName, RF, setter_value_guards(Line, TypeNode)).
 
 setter(Line, RecordName, {record_field, _, {atom, _, FieldName}}, Guards) ->
     {function, Line, FieldName, 2, 
@@ -51,6 +48,17 @@ setter(Line, RecordName, {record_field, _, {atom, _, FieldName}}, Guards) ->
          {var, Line, 'R'}, 
          RecordName, 
          [{record_field, Line, {atom, Line, FieldName}, {var, Line, 'Val'}}]}]}]}.
+
+setter_value_guards(Line, {type, _, union, TypeNodes}) ->
+    lists:concat([ setter_value_guards(Line, TN) || TN <- TypeNodes ]);
+
+setter_value_guards(Line, {type, _, Type, _}) ->
+    case lists:keyfind(Type, 1, basic_types()) of
+        false ->
+            [];
+        {Type, Guard} ->
+            [ [{call, Line, {atom, Line, Guard}, [{var, Line, 'Val'}]}] ]
+    end.
 
 basic_types() ->
     [{atom, is_atom},
@@ -65,12 +73,3 @@ basic_types() ->
      {map, is_map},
      {binary, is_binary},
      {function, is_function}].
-
-setter_value_guards(Line, Type) ->
-    case lists:keyfind(Type, 1, basic_types()) of
-        false ->
-            [];
-        {Type, Guard} ->
-            [ [{call, Line, {atom, Line, Guard}, [{var, Line, 'Val'}]}] ]
-    end.
-

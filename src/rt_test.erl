@@ -3,7 +3,7 @@
 -compile([export_all]).
 -compile({parse_transform, record_transform}).
 
--record(rt_test, {field_a :: integer(),
+-record(rt_test, {field_a :: integer() | float(),
                   field_b,
                   field_c :: list(byte())}).
 
