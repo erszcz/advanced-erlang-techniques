@@ -74,11 +74,3 @@ setter_value_guards(Line, Type) ->
             [ [{call, Line, {atom, Line, Guard}, [{var, Line, 'Val'}]}] ]
     end.
 
-%{function,15,field_a,2,
-%    [{clause,15,
-%         [{var,15,'R'},{var,15,'Val'}],
-%         [[{call,15,{atom,15,is_integer},[{var,15,'Val'}]}]],
-%         [{record,16,
-%              {var,16,'R'},
-%              rt_test,
-%              [{record_field,16,{atom,16,field_a},{var,16,'Val'}}]}]}]}.
